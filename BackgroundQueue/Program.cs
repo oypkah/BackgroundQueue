@@ -1,15 +1,24 @@
+using BackgroundQueue.Abstractions.Services.QueueServices;
+using BackgroundQueue.Concrete.Services.HostedServices;
+using BackgroundQueue.Concrete.Services.QueueServices;
+
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddLogging(x =>
+{
+    x.AddConsole();
+    x.AddDebug();
+});
+
+builder.Services.AddSingleton<IMailQueueService, MailQueueService>();
+
+builder.Services.AddHostedService<MailQueueHostedService>();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
