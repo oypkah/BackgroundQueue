@@ -1,8 +1,9 @@
 ﻿using BackgroundQueue.Abstractions.Services.QueueServices;
+using BackgroundQueue.Models;
 
 namespace BackgroundQueue.Concrete.Services.HostedServices;
 
-public class MailQueueHostedService : BackgroundService
+public sealed class MailQueueHostedService : BackgroundService
 {
     private readonly ILogger<MailQueueHostedService> _logger;
     private readonly IMailQueueService _mailQueueService;
@@ -18,8 +19,13 @@ public class MailQueueHostedService : BackgroundService
         while (!stoppingToken.IsCancellationRequested)
         {
             var mailModel = await _mailQueueService.DeQueue(stoppingToken);
-            // await Task.Delay(1000, stoppingToken);
-            _logger.LogInformation($"ExecuteAsync: Sent mail to {mailModel.Email} as <h1>Welcome, <b>{mailModel.Name} {mailModel.Surname}</b></h1>");
+            await SendMailAsync(mailModel, stoppingToken);
         }
+    }
+
+    private async Task SendMailAsync(MailModel mailModel, CancellationToken cancellationToken = default)
+    {
+        await Task.Delay(1000, cancellationToken);
+        _logger.LogInformation($"SendMailAsync: Mail was sent to {mailModel.Email} as 'Hi <b>{mailModel.Name} {mailModel.Surname}</b>, <p>if you want to see projects similar to this, check out my <a href='https://github.com/oypkah'>Github</a> profile</p>'");
     }
 }

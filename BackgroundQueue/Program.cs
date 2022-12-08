@@ -14,8 +14,10 @@ builder.Services.AddLogging(x =>
 });
 
 builder.Services.AddSingleton<IMailQueueService, MailQueueService>();
+builder.Services.AddSingleton<ISmsQueueService, SmsQueueService>();
 
 builder.Services.AddHostedService<MailQueueHostedService>();
+builder.Services.AddHostedService<SmsQueueHostedService>();
 
 var app = builder.Build();
 

@@ -6,7 +6,7 @@ namespace BackgroundQueue.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class MailQueueController : ControllerBase
+public sealed class MailQueueController : ControllerBase
 {
     private readonly IMailQueueService _mailQueueService;
 
@@ -14,14 +14,19 @@ public class MailQueueController : ControllerBase
     {
         _mailQueueService = mailQueueService;
     }
-    
-    [HttpPost]
-    public IActionResult Add(MailModel[] mailModels)
+
+    [HttpPost("add")]
+    public IActionResult Add(MailModel mailModel)
+    {
+        _mailQueueService.AddQueue(mailModel);
+        return Ok();
+    }
+
+    [HttpPost("add-range")]
+    public IActionResult AddRange(IEnumerable<MailModel> mailModels)
     {
         foreach (var mailModel in mailModels)
-        {
             _mailQueueService.AddQueue(mailModel);
-        }
 
         return Ok();
     }
